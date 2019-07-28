@@ -2,7 +2,7 @@
   
   import React from 'react'
 	import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
-	import { getImageUrlFromApi } from '../API/TMDBApi.js'
+	import { getImageFromApi } from '../API/TMDBApi.js'
   
   class FilmItem extends React.Component {
 		render() {
@@ -18,7 +18,7 @@
 
 					<Image
 					style={styles.image}
-					source={{uri: getImageUrlFromApi(film.poster_path)}}
+					source={{uri: getImageFromApi(film.poster_path)}}
 					/>
 					<View style={styles.content_container}>
 						<View style={styles.header_container}>

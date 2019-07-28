@@ -11,7 +11,14 @@ export function getFilmsFromApi(text, page)
         .catch((error) => console.log(error)) 
 }
 
-export function getImageUrlFromApi(text)
+export function getImageFromApi(text)
 {
     return "https://image.tmdb.org/t/p/w500/" + text
+}
+
+export function getFilmDetailFromApi(id)
+{
+    return fetch('https://api.themoviedb.org/3/movie/' + id + '?api_key=' + API_TOKEN + '&language=fr')
+        .then((response) => response.json())
+        .catch((error) => console.error(error));
 }

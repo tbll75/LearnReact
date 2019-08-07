@@ -1,11 +1,31 @@
   // Components/FilmItem.js
   
 import React from 'react'
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, TouchableOpacity, Animated, Dimensions} from 'react-native'
 import { getImageFromApi } from '../API/TMDBApi.js'
 import { connect } from 'react-redux'
   
 class FilmItem extends React.Component {
+
+	constructor(props)
+	{
+		super(props)
+
+		this.state =
+		{
+			positionLeft: new Animated.Value(Dimensions.get('window').width)
+		}
+	}
+
+	componentDidMount()
+	{
+		Animated.spring(
+			this.state.positionLeft,
+			{
+				toValue: 0
+			}
+		).start()
+	}
 
 	_displayFavoriteImage()
 	{
@@ -30,29 +50,31 @@ class FilmItem extends React.Component {
 		const displayDetailForFilm = this.props.displayDetailForFilm
 		
 		return (
-			<TouchableOpacity 
-				style={styles.main_container}
-				onPress={() => displayDetailForFilm(film.id)} >
+			<Animated.View style={{left: this.state.positionLeft}}>
+				<TouchableOpacity 
+					style={styles.main_container}
+					onPress={() => displayDetailForFilm(film.id)} >
 
-				<Image
-				style={styles.image}
-				source={{uri: getImageFromApi(film.poster_path)}}
-				/>
-				<View style={styles.content_container}>
-					<View style={styles.header_container}>
-						{this._displayFavoriteImage()}
-						<Text style={styles.title_text}>{film.title}</Text>
-						<Text style={styles.vote_text}>{film.popularity}</Text>
+					<Image
+					style={styles.image}
+					source={{uri: getImageFromApi(film.poster_path)}}
+					/>
+					<View style={styles.content_container}>
+						<View style={styles.header_container}>
+							{this._displayFavoriteImage()}
+							<Text style={styles.title_text}>{film.title}</Text>
+							<Text style={styles.vote_text}>{film.popularity}</Text>
+						</View>
+						<View style={styles.description_container}>
+							<Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
+							{/* La propriété numberOfLines permet de couper un texte si celui-ci est trop long, il suffit de définir un nombre maximum de ligne */}
+						</View>
+						<View style={styles.date_container}>
+							<Text style={styles.date_text}>{film.release_date}</Text>
+						</View>
 					</View>
-					<View style={styles.description_container}>
-						<Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
-						{/* La propriété numberOfLines permet de couper un texte si celui-ci est trop long, il suffit de définir un nombre maximum de ligne */}
-					</View>
-					<View style={styles.date_container}>
-						<Text style={styles.date_text}>{film.release_date}</Text>
-					</View>
-				</View>
-			</TouchableOpacity>
+				</TouchableOpacity>
+			</Animated.View>
 			)
 		}
 	}

@@ -4,6 +4,7 @@ import films from "../Helpers/FilmData.js"
 import FilmItem from "./FilmItem.js"
 import { getFilmsFromApi } from "../API/TMDBApi.js"
 import {connect} from  "react-redux"
+import FilmList from "./FilmList.js"
 
 class Search extends React.Component
 {
@@ -18,24 +19,27 @@ class Search extends React.Component
         this.totalPage = 0
         this.filmToSearch = ""
 
-        //this._films = []
+        this._loadFilms = this._loadFilms.bind(this)
     }
 
     _loadFilms()
     {
-        this.setState({isLoading: true})
-        //console.log("_loadFilms")
+        if (this.filmToSearch.length > 0) 
+        {
+            this.setState({isLoading: true})
+            //console.log("_loadFilms")
 
-        getFilmsFromApi(this.filmToSearch, this.page+1).then((data) => 
-        { 
-            //console.log(data.results)
-            this.page = data.page
-            this.totalPage = data.total_pages
-            this.setState({
-                films: this.state.films.concat(data.results),
-                isLoading: false
-            })
-        }) 
+            getFilmsFromApi(this.filmToSearch, this.page+1).then((data) => 
+            { 
+                //console.log(data.results)
+                this.page = data.page
+                this.totalPage = data.total_pages
+                this.setState({
+                    films: this.state.films.concat(data.results),
+                    isLoading: false
+                })
+            }) 
+        }
     }
 
     _displayLoader()
@@ -58,13 +62,6 @@ class Search extends React.Component
         this.setState({films: []}, () => this._loadFilms())
     }
 
-    _displayDetailForFilm = (idFilm) => 
-    {
-        console.log("id: " + idFilm)
-
-        this.props.navigation.navigate("FilmDetail", {idFilm: idFilm}) 
-    }
-
     render() 
     {
         console.log("RENDER " + this.state.isLoading)
@@ -72,6 +69,7 @@ class Search extends React.Component
 
         return(
             <View style={styles.mainContainer}>
+
                 <TextInput style={styles.textInput} 
                     onSubmitEditing={() => this._searchFilms()}
                     placeholder="Movie Title" 
@@ -79,19 +77,19 @@ class Search extends React.Component
                     /> 
 
                 <Button title="Search" style={styles.buttonSearch} onPress={() => {this._searchFilms()}}/>
-                <FlatList
-                    data={this.state.films}
+
+                <FilmList
+                    films={this.state.films}
                     extraData={this.props.favoritesFilm}
-                    keyExtractor={(item) => item.id.toString()}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        //console.log("onEndReached " + " / " + this.state.isLoading + " / " + (this.totalPage && this.state.isLoading == false))
-                        if (this.page < this.totalPage && this.state.isLoading == false)
-                            this._loadFilms()
-                    }}
-                    renderItem={({item}) => <FilmItem film={item} displayDetailForFilm={this._displayDetailForFilm} />}
+                    navigation={this.props.navigation}
+                    page={this.page}
+                    totalPage={this.totalPage}
+                    loadFilms={this._loadFilms}
+                    isFavorites={false}
                 />
+
                 {this._displayLoader()}
+
             </View>
         ) 
     }

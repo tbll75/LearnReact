@@ -1,5 +1,5 @@
-import Rect from 'react'
-import {View, Animated, Dimensions} from 'react-native'
+import React from 'react'
+import {Animated, Dimensions} from 'react-native'
 
 class FadeIn extends React.Component
 {
@@ -18,16 +18,16 @@ class FadeIn extends React.Component
         Animated.spring(
             this.state.positionLeft,
             {
-                Value: 0
+                toValue: 0
             }
-        )
+        ).start()
     }
 
     render()
     {
         return (
             <Animated.View style={{left: this.state.positionLeft}}>
-
+                {this.props.children}
             </Animated.View>
         )
     }

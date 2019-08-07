@@ -6,6 +6,7 @@ import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
 import { connect } from 'react-redux'
+import EnlargeShrink from '../Animation/EnlargeShrink.js'
 
 
 class FilmDetail extends React.Component {
@@ -78,14 +79,18 @@ class FilmDetail extends React.Component {
   _displayFavoriteImage()
   {
     var sourceImage = require("../Images/fav_desactivated.png")
+    var activated = false
 
     if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !==  -1)
     {
       sourceImage = require("../Images/fav_activated.png")
+      activated = true
     }
 
     return  (
-      <Image source={sourceImage} style={styles.favoriteImage}/>
+      <EnlargeShrink shouldEnlarge={activated}>
+        <Image source={sourceImage} style={styles.favoriteImage}/>
+      </EnlargeShrink>
     )
   }
 
@@ -99,9 +104,12 @@ class FilmDetail extends React.Component {
             source={{uri: getImageFromApi(film.backdrop_path)}}
           />
           <Text style={styles.title_text}>{film.title}</Text>
+
+
           <TouchableOpacity style={styles.favoriteContnainer} onPress={() => this._toggleFavorite()}>
-            {this._displayFavoriteImage()}
+              {this._displayFavoriteImage()}
           </TouchableOpacity>
+
           <Text style={styles.description_text}>{film.overview}</Text>
           <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
           <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
@@ -179,8 +187,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   favoriteImage: {
-    height: 40,
-    width: 40,
+    flex:1,
+    height: null,
+    width: null,
   },
   shareTouchableFloatingActionButton: {
     position: 'absolute',
